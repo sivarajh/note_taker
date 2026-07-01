@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
 import { nanoid } from "nanoid";
 import type { Notebook, Section, Page } from "../types";
 
@@ -23,6 +22,32 @@ function newNotebook(name = "My Notebook"): Notebook {
   return { id: nanoid(8), name, sections: [newSection("Quick Notes", 0)] };
 }
 
+// Fresh starting content for a brand-new (or signed-out) user.
+function seedNotebooks(): Notebook[] {
+  return [
+    {
+      id: nanoid(8),
+      name: "Personal",
+      sections: [
+        {
+          id: nanoid(8),
+          name: "Ideas",
+          color: SECTION_COLORS[0],
+          pages: [
+            {
+              id: nanoid(8),
+              title: "Welcome to OneNote Mimic",
+              contentHTML:
+                "<h1>Welcome 👋</h1><p>This is a OneNote-style note-taking app. Use the left sidebar to organize <strong>Notebooks</strong>, <em>Sections</em>, and Pages.</p><ul><li>Click <strong>+ Notebook</strong> to add a new notebook</li><li>Use the toolbar to format text</li><li>Everything syncs to your account</li></ul>",
+              updatedAt: Date.now(),
+            },
+          ],
+        },
+      ],
+    },
+  ];
+}
+
 type Selected = { notebookId?: string; sectionId?: string; pageId?: string };
 
 type State = {
@@ -32,6 +57,8 @@ type State = {
 
 type Actions = {
   select: (s: Selected) => void;
+  setNotebooks: (notebooks: Notebook[]) => void;
+  resetToSeed: () => void;
   addNotebook: () => void;
   renameNotebook: (id: string, name: string) => void;
   deleteNotebook: (id: string) => void;
@@ -44,34 +71,15 @@ type Actions = {
   updatePageContent: (notebookId: string, sectionId: string, id: string, html: string) => void;
 };
 
-export const useNotebooksStore = create<State & Actions>()(
-  persist(
-    (set) => ({
-      notebooks: [
-        {
-          id: nanoid(8),
-          name: "Personal",
-          sections: [
-            {
-              id: nanoid(8),
-              name: "Ideas",
-              color: SECTION_COLORS[0],
-              pages: [
-                {
-                  id: nanoid(8),
-                  title: "Welcome to OneNote Mimic",
-                  contentHTML:
-                    "<h1>Welcome 👋</h1><p>This is a OneNote-style note-taking app. Use the left sidebar to organize <strong>Notebooks</strong>, <em>Sections</em>, and Pages.</p><ul><li>Click <strong>+ Notebook</strong> to add a new notebook</li><li>Use the toolbar to format text</li><li>Everything auto-saves to your browser</li></ul>",
-                  updatedAt: Date.now(),
-                },
-              ],
-            },
-          ],
-        },
-      ],
-      selected: {},
+export const useNotebooksStore = create<State & Actions>()((set) => ({
+  notebooks: seedNotebooks(),
+  selected: {},
 
-      select: (s) => set({ selected: s }),
+  select: (s) => set({ selected: s }),
+
+  setNotebooks: (notebooks) => set({ notebooks }),
+
+  resetToSeed: () => set({ notebooks: seedNotebooks(), selected: {} }),
 
       addNotebook: () =>
         set((st) => {
@@ -233,10 +241,7 @@ export const useNotebooksStore = create<State & Actions>()(
                 }
           ),
         })),
-    }),
-    { name: "onenote-mimic-v1" }
-  )
-);
+}));
 
 export function findSelection(
   notebooks: Notebook[],
