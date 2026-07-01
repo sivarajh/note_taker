@@ -65,3 +65,30 @@ npm run dev
 
 Visit `http://localhost:5173/note_taker/`, sign in with Google, and your notes will sync to
 Supabase. Reloading or signing in from another browser with the same account restores them.
+
+## 6. Deploy via GitHub Actions (GitHub Pages)
+
+Two workflows are included:
+
+- **`.github/workflows/ci.yml`** — runs `npm ci`, `npm run lint`, and `npm run build` on every
+  push and pull request (a build check).
+- **`.github/workflows/deploy.yml`** — builds and publishes to GitHub Pages on push to `main`
+  (or manually via **Actions → Deploy to GitHub Pages → Run workflow**).
+
+Because Vite inlines `VITE_SUPABASE_*` **at build time**, the Actions build needs them too:
+
+1. **Add repo secrets** — Settings → Secrets and variables → Actions → *New repository secret*:
+   - `VITE_SUPABASE_URL`
+   - `VITE_SUPABASE_ANON_KEY`
+
+   (The anon key is public-safe — it ships to the browser regardless — but secrets keep it out
+   of the workflow YAML. Without them, the deployed site loads and then throws.)
+2. **Enable Pages** — Settings → Pages → **Source: GitHub Actions**.
+3. **Register the production URL for OAuth** (required or Google sign-in fails on the live
+   site). The deployed URL is `https://<your-username>.github.io/note_taker/`:
+   - Supabase → Authentication → URL Configuration → add it to **Redirect URLs** (and set it
+     as the Site URL if this is your primary environment).
+   - Google Cloud OAuth client → add it under authorized JavaScript origins / redirect as
+     needed.
+4. Push to `main` (or run the Deploy workflow manually) → the site builds with the Supabase
+   values inlined and publishes to Pages.
