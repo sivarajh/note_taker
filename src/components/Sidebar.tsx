@@ -18,7 +18,7 @@ export function Sidebar() {
   return (
     <aside className="w-56 bg-onenote-purpleDark text-white flex flex-col">
       <div className="px-4 py-4 border-b border-white/10">
-        <h1 className="text-lg font-semibold">OneNote Mimic</h1>
+        <h1 className="text-lg font-semibold">Notty</h1>
         <div className="mt-3 flex items-center gap-2">
           {avatarUrl ? (
             <img src={avatarUrl} alt="" className="h-6 w-6 shrink-0 rounded-full" />
