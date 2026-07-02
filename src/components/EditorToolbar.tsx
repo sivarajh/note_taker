@@ -1,7 +1,7 @@
 import type { Editor } from "@tiptap/react";
 import {
   Bold, Italic, Strikethrough, Code, Heading1, Heading2, Heading3,
-  List, ListOrdered, Quote, Undo2, Redo2,
+  List, ListOrdered, ListChecks, Quote, Undo2, Redo2,
 } from "lucide-react";
 
 function Btn({
@@ -53,6 +53,8 @@ export function EditorToolbar({ editor }: { editor: Editor | null }) {
         onClick={() => c().toggleBulletList().run()}><List size={16} /></Btn>
       <Btn title="Numbered list" active={editor.isActive("orderedList")}
         onClick={() => c().toggleOrderedList().run()}><ListOrdered size={16} /></Btn>
+      <Btn title="Checklist" active={editor.isActive("taskList")}
+        onClick={() => c().toggleTaskList().run()}><ListChecks size={16} /></Btn>
       <Btn title="Quote" active={editor.isActive("blockquote")}
         onClick={() => c().toggleBlockquote().run()}><Quote size={16} /></Btn>
     </div>
