@@ -23,7 +23,7 @@ export function Login() {
           <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-onenote-purple text-white">
             <Book size={24} />
           </div>
-          <h1 className="text-xl font-semibold text-gray-900">OneNote Mimic</h1>
+          <h1 className="text-xl font-semibold text-gray-900">Notes of Hari</h1>
           <p className="text-sm text-gray-500">
             Sign in to access your notebooks anywhere.
           </p>

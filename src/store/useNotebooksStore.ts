@@ -36,7 +36,7 @@ function seedNotebooks(): Notebook[] {
           pages: [
             {
               id: nanoid(8),
-              title: "Welcome to OneNote Mimic",
+              title: "Welcome to Notes of Hari",
               contentHTML:
                 "<h1>Welcome 👋</h1><p>This is a OneNote-style note-taking app. Use the left sidebar to organize <strong>Notebooks</strong>, <em>Sections</em>, and Pages.</p><ul><li>Click <strong>+ Notebook</strong> to add a new notebook</li><li>Use the toolbar to format text</li><li>Everything syncs to your account</li></ul>",
               updatedAt: Date.now(),
