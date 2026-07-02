@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import { TaskItem, TaskList } from "@tiptap/extension-list";
 import { useNotebooksStore, findSelection } from "../store/useNotebooksStore";
 import { EditorToolbar } from "./EditorToolbar";
 
@@ -11,7 +12,7 @@ export function Editor() {
   const saveTimer = useRef<number | null>(null);
 
   const editor = useEditor({
-    extensions: [StarterKit],
+    extensions: [StarterKit, TaskList, TaskItem.configure({ nested: true })],
     content: page?.contentHTML || "",
     editorProps: {
       attributes: { class: "ProseMirror" },
