@@ -4,6 +4,7 @@ import StarterKit from "@tiptap/starter-kit";
 import { TaskItem, TaskList } from "@tiptap/extension-list";
 import { useNotebooksStore, findSelection } from "../store/useNotebooksStore";
 import { EditorToolbar } from "./EditorToolbar";
+import { ShareMenu } from "./ShareMenu";
 
 export function Editor() {
   const { notebooks, selected, updatePageContent, renamePage } = useNotebooksStore();
@@ -55,8 +56,11 @@ export function Editor() {
           placeholder="Untitled page"
           className="w-full px-8 pt-8 pb-2 text-3xl font-semibold text-gray-900 outline-none border-b border-gray-100"
         />
-        <div className="text-xs text-gray-400 px-8 py-2">
-          {new Date(page.updatedAt).toLocaleString()}
+        <div className="flex items-center justify-between px-8 py-2">
+          <div className="text-xs text-gray-400">
+            {new Date(page.updatedAt).toLocaleString()}
+          </div>
+          <ShareMenu notebookId={notebook.id} sectionId={section.id} page={page} />
         </div>
         <EditorContent editor={editor} />
       </div>

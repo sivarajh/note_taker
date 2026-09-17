@@ -69,6 +69,12 @@ type Actions = {
   renamePage: (notebookId: string, sectionId: string, id: string, title: string) => void;
   deletePage: (notebookId: string, sectionId: string, id: string) => void;
   updatePageContent: (notebookId: string, sectionId: string, id: string, html: string) => void;
+  setPageShareId: (
+    notebookId: string,
+    sectionId: string,
+    id: string,
+    shareId: string | undefined
+  ) => void;
 };
 
 export const useNotebooksStore = create<State & Actions>()((set) => ({
@@ -235,6 +241,27 @@ export const useNotebooksStore = create<State & Actions>()((set) => ({
                             p.id === id
                               ? { ...p, contentHTML: html, updatedAt: Date.now() }
                               : p
+                          ),
+                        }
+                  ),
+                }
+          ),
+        })),
+
+      setPageShareId: (notebookId, sectionId, id, shareId) =>
+        set((st) => ({
+          notebooks: st.notebooks.map((n) =>
+            n.id !== notebookId
+              ? n
+              : {
+                  ...n,
+                  sections: n.sections.map((s) =>
+                    s.id !== sectionId
+                      ? s
+                      : {
+                          ...s,
+                          pages: s.pages.map((p) =>
+                            p.id === id ? { ...p, shareId } : p
                           ),
                         }
                   ),

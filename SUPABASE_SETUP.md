@@ -56,6 +56,60 @@ create policy "Users manage own notes" on public.notes
 Each user has exactly one row; `data` holds `{ "notebooks": [...] }`. The app reads it on
 login and debounce-upserts it on every change.
 
+## 4b. Create the shared_pages table (anonymous share links)
+
+Pages can be shared via a public read-only link. Run this in the **SQL Editor**:
+
+```sql
+create table public.shared_pages (
+  id           text primary key,
+  user_id      uuid not null references auth.users(id) on delete cascade,
+  page_id      text not null,
+  title        text not null default '',
+  content_html text not null default '',
+  created_at   timestamptz not null default now(),
+  updated_at   timestamptz not null default now()
+);
+
+alter table public.shared_pages enable row level security;
+
+create policy "Owners read own shares" on public.shared_pages
+  for select using (auth.uid() = user_id);
+create policy "Owners insert own shares" on public.shared_pages
+  for insert with check (auth.uid() = user_id);
+create policy "Owners update own shares" on public.shared_pages
+  for update using (auth.uid() = user_id) with check (auth.uid() = user_id);
+create policy "Owners delete own shares" on public.shared_pages
+  for delete using (auth.uid() = user_id);
+
+-- Anonymous viewers fetch a single share by its unguessable id through this
+-- function. There is intentionally NO public SELECT policy on the table, so
+-- the shares of all users can never be listed/enumerated via the REST API.
+create or replace function public.get_shared_page(share_id text)
+returns table (title text, content_html text, updated_at timestamptz)
+language sql
+security definer
+set search_path = public
+stable
+as $$
+  select title, content_html, updated_at
+  from public.shared_pages
+  where id = share_id;
+$$;
+
+grant execute on function public.get_shared_page(text) to anon, authenticated;
+```
+
+How sharing works in the app:
+
+- **Share** on a page inserts a row here (id = 21-char nanoid) and stores that id on the
+  page (`shareId`). The link is `<app-url>#/s/<id>`; anyone who has it can view the page
+  read-only without signing in — the app fetches it via `get_shared_page` before the
+  login gate.
+- Shared rows are re-upserted on every notes sync, so the link always shows the latest
+  saved content. Unsharing (or deleting the page) removes the row and the link stops
+  working.
+
 ## 5. Run
 
 ```

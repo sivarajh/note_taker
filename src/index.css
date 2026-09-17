@@ -78,3 +78,11 @@ html, body, #root {
   height: 0;
   pointer-events: none;
 }
+
+/* Public shared-page view: content is display-only. */
+.shared-view .ProseMirror {
+  min-height: 0;
+}
+.shared-view input[type="checkbox"] {
+  pointer-events: none;
+}

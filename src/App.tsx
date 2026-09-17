@@ -4,8 +4,10 @@ import { SectionList } from "./components/SectionList";
 import { PageList } from "./components/PageList";
 import { Editor } from "./components/Editor";
 import { Login } from "./components/Login";
+import { SharedPageView } from "./components/SharedPageView";
 import { useAuth } from "./auth/authContext";
 import { useNotesSync } from "./hooks/useNotesSync";
+import { getShareIdFromHash } from "./lib/shares";
 
 function Spinner({ label }: { label: string }) {
   return (
@@ -32,6 +34,10 @@ function Workspace({ user }: { user: User }) {
 
 export default function App() {
   const { loading, user } = useAuth();
+
+  // Public share links render read-only, before (and without) any auth.
+  const shareId = getShareIdFromHash();
+  if (shareId) return <SharedPageView shareId={shareId} />;
 
   if (loading) return <Spinner label="Loading…" />;
   if (!user) return <Login />;

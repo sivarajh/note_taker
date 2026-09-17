@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { User } from "@supabase/supabase-js";
 import { supabase } from "../lib/supabase";
+import { syncShares } from "../lib/shares";
 import { useNotebooksStore } from "../store/useNotebooksStore";
 import type { Notebook } from "../types";
 
@@ -81,6 +82,7 @@ export function useNotesSync(user: User) {
           updated_at: new Date().toISOString(),
         });
         if (error) console.error("Failed to sync notes", error);
+        await syncShares(user.id, notebooks);
       }, PUSH_DEBOUNCE_MS);
     });
 
