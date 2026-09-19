@@ -3,6 +3,8 @@ export type Page = {
   title: string;
   contentHTML: string;
   updatedAt: number;
+  /** Set when the page has a public share link (id of its shared_pages row). */
+  shareId?: string;
 };
 
 export type Section = {
